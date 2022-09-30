@@ -19,7 +19,7 @@
     
     await axios.post(`${import.meta.env.VITE_API_URL}/login`, form_data.value)
     .then(response => {
-      Cookies.set('auth_token', response.data, { expires: 1/3, domain: '.dohchdcar.local' }); // expires in 8 hours
+      Cookies.set('auth_token', response.data, { expires: 1/3 }); // expires in 8 hours
       router.push('/');
     })
     .catch(() => status.value = 'error');

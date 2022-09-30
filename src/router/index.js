@@ -89,10 +89,10 @@ router.beforeEach(async (to, from) => {
       Cookies.set('auth_user', JSON.stringify({
         avatar: response.data.avatar,
         name: response.data.name,
-      }), { domain: 'dohchdcar.local' });
+      }));
     })
     .catch(() => {
-      Cookies.remove('auth_token', { domain: 'dohchdcar.local' });
+      Cookies.remove('auth_token');
       return '/login';
     });
   } else if (token !== undefined) {
