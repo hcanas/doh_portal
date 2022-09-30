@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        @apply bg-gray-400
+    }
+
+    .w-192 {
+        width: 48rem;
+    }
+
+    .h-192 {
+        height: 48rem;
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    button,
+    input,
+    textarea,
+    select,
+    a {
+        @apply outline-none focus:ring-1
+    }
+
+    /* ag-grid */
+    .ag-theme-material .ag-cell-value {
+        @apply leading-normal text-gray-600 py-2
+    }
+}
