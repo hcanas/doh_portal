@@ -76,12 +76,12 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from) => {
-  const token = Cookies.get('auth_token', { domain: location.hostname });
+  const token = Cookies.get('auth_token', { domain: '.' + location.hostname });
   
   if (to.meta.requiresAuth && token === undefined) {
     return '/login';
   } else if (to.meta.requiresAuth && token !== undefined) {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${Cookies.get('auth_token', { domain: location.hostname })}`;
+    axios.defaults.headers.common['Authorization'] = `Bearer ${Cookies.get('auth_token', { domain: '.' + location.hostname })}`;
     const permissions = ['users', 'permissions'];
     
     return await axios.post(`${import.meta.env.VITE_API_URL}/auth?permissions=${permissions.join()}`)
@@ -89,10 +89,10 @@ router.beforeEach(async (to, from) => {
       Cookies.set('auth_user', JSON.stringify({
         avatar: response.data.avatar,
         name: response.data.name,
-      }), { domain: location.hostname });
+      }), { domain: '.' + location.hostname });
     })
     .catch(() => {
-      Cookies.remove('auth_token', { domain: location.hostname });
+      Cookies.remove('auth_token', { domain: '.' + location.hostname });
       return '/login';
     });
   } else if (token !== undefined) {
