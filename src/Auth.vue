@@ -5,7 +5,7 @@
   
   import MenuItem from './components/nav/Item.vue';
   
-  const user = JSON.parse(Cookies.get('auth_user'));
+  const user = JSON.parse(Cookies.get('auth_user', { domain: location.hostname }));
   const router = useRouter();
   const show_user_menu = ref(false);
 
@@ -14,7 +14,7 @@
   const toggleUserMenu = () => show_user_menu.value = !show_user_menu.value;
   
   const logout = () => {
-    Cookies.remove('auth_token');
+    Cookies.remove('auth_token', { domain: location.hostname });
     router.push('/login');
   };
 </script>
