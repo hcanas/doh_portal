@@ -2,6 +2,7 @@
   import { ref } from 'vue';
   import { useRoute } from 'vue-router';
   import axios from 'axios';
+  import Cookies from 'js-cookie';
   
   import TimeLog from './profile/TimeLog.vue';
   import Permissions from './profile/Permissions.vue';
@@ -28,6 +29,14 @@
     user.value.data = new_user;
     user.value.show_form = false;
   };
+
+  const auth_permissions = JSON.parse(Cookies.get('auth_permissions') ?? '[]');
+
+  const hasPermission = name => {
+    const permission = auth_permissions.find(x => x.n === name);
+
+    return Boolean(permission);
+  };
 </script>
 
 <template>
@@ -52,12 +61,12 @@
                 <span class="text-sm">IDs</span>
               </div>
             </button>
-            <button @click="" class="text-gray-600 bg-gray-50 hover:text-white hover:bg-red-600 px-4 py-1 rounded shadow transition">
+            <!-- <button @click="" class="text-gray-600 bg-gray-50 hover:text-white hover:bg-red-600 px-4 py-1 rounded shadow transition">
               <div class="flex items-center space-x-1">
                 <i class="fas fa-trash text-xs" />
                 <span class="text-sm">Delete</span>
               </div>
-            </button>
+            </button> -->
           </div>
           <div class="flex flex-col">
             <span class="text-xs text-gray-400 uppercase font-medium">Name</span>
@@ -148,7 +157,7 @@
           <time-log :id="user.data.biometrics_id" :key="user.data.biometrics_id" />
         </card>
         
-        <card class="space-y-0">
+        <card v-if="hasPermission('user_permissions:manage')" class="space-y-0">
           <card-header
             class="mb-12"
             :icon="'fas fa-user-shield'"

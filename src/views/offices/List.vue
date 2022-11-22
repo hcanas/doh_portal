@@ -28,6 +28,13 @@
         sortable: true,
       },
       {
+        headerName: 'Unit',
+        field: 'unit',
+        flex: 1,
+        sortable: true,
+        valueGetter: params => params.data.unit ? (params.data.unit.charAt(0).toUpperCase() + params.data.unit.slice(1)) : '',
+      },
+      {
         headerName: 'Parent Office',
         field: 'parent.name',
         flex: 2,

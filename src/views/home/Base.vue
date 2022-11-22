@@ -1,6 +1,7 @@
 <script setup>
   import { ref, watch } from 'vue';
   import axios from 'axios';
+  import Cookies from 'js-cookie';
   
   import 'ag-grid-community/styles/ag-grid.css';
   import 'ag-grid-community/styles/ag-theme-material.min.css';
@@ -50,6 +51,14 @@
     show: false,
     id: null,
   });
+
+  const auth_permissions = JSON.parse(Cookies.get('auth_permissions') ?? '[]');
+
+  const hasPermission = name => {
+    const permission = auth_permissions.find(x => x.n === name);
+
+    return Boolean(permission);
+  };
   
   await axios.get(`${import.meta.env.VITE_API_URL}/announcements`)
     .then(response => ag_grid_options.value.row_data = response.data);
@@ -129,15 +138,6 @@
               integrity, excellence, and compassion.</p>
           </div>
         </div>
-      
-        <div class="flex justify-center xl:hidden">
-          <button @click="showLogin" class="w-full bg-white rounded px-4 py-2 hover:bg-gray-100">
-            <div class="flex justify-center items-center space-x-2">
-              <i class="fas fa-arrow-right text-sm text-gray-600" />
-              <span class="text-sm text-gray-600 font-medium uppercase">Sign In</span>
-            </div>
-          </button>
-        </div>
       </div>
     </card>
     
@@ -145,7 +145,7 @@
       <card-header
         :icon="'fas fa-bullhorn'"
         :label="'Announcements'"
-        :actions="['create', 'search']"
+        :actions="[hasPermission('announcements:manage') ? 'create' : '', 'search']"
         v-model:searchValue="ag_grid_options.filter_text"
         @create="showCreateForm"
       >
@@ -171,8 +171,8 @@
     
     <card class="w-96">
       <card-header :icon="'fas fa-computer'" :label="'Information Systems'" />
-      <div class="">
-      
+      <div class="flex flex-col space-y-6">
+        <a href="http://ppis.dohchdcar.local" class="text-blue-600 hover:text-blue-500 hover:underline">Procurement Planning Information System</a>
       </div>
     </card>
   </div>

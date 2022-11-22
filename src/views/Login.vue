@@ -12,27 +12,22 @@
   });
   
   const status = ref('');
-  const mobile_view = ref('landing');
   
   const login = async () => {
     status.value = 'authenticating';
     
     await axios.post(`${import.meta.env.VITE_API_URL}/login`, form_data.value)
     .then(response => {
-      Cookies.set('auth_token', response.data, { expires: 1/3, domain: '.' + location.hostname }); // expires in 8 hours
+      Cookies.set('auth_token', response.data, { expires: 1/3, domain: location.hostname }); // expires in 8 hours
       router.push('/');
     })
     .catch(() => status.value = 'error');
-  };
-  
-  const showLogin = () => {
-    mobile_view.value = 'login';
   };
 </script>
 
 <template>
   <div class="w-full xl:w-2/3 h-full flex xl:mx-auto xl:p-12">
-    <div :class="{ 'z-10 opacity-100': mobile_view === 'landing', 'z-0 opacity-0': mobile_view === 'login' }" class="absolute xl:static xl:z-0 xl:opacity-100 w-full xl:w-1/2 h-full bg-white xl:rounded-l-2xl xl:shadow-lg transition duration-500">
+    <div class="w-1/2 h-full bg-white rounded-l-2xl shadow-lg">
       <div class="h-full flex flex-col space-y-8 xl:space-y-24 p-8 xl:p-12 overflow-y-auto">
         <div class="flex justify-center items-center space-x-2">
           <img src="/images/DOH-Logo.png" class="flex-shrink-0 w-16 xl:w-20">
@@ -67,19 +62,10 @@
               integrity, excellence, and compassion.</p>
           </div>
         </div>
-  
-        <div class="flex justify-center xl:hidden">
-          <button @click="showLogin" class="w-full bg-white rounded px-4 py-2 hover:bg-gray-100">
-            <div class="flex justify-center items-center space-x-2">
-              <i class="fas fa-arrow-right text-sm text-gray-600" />
-              <span class="text-sm text-gray-600 font-medium uppercase">Sign In</span>
-            </div>
-          </button>
-        </div>
       </div>
     </div>
     
-    <div :class="{ 'z-10 opacity-100': mobile_view === 'login', 'z-0 opacity-0': mobile_view === 'landing' }" class="absolute xl:static xl:z-0 xl:opacity-100 w-full xl:w-1/2 h-full bg-green-600 xl:rounded-r-2xl xl:shadow-lg transition duration-500">
+    <div class="w-1/2 h-full bg-green-600 rounded-r-2xl shadow-lg">
       <div class="h-full flex flex-col justify-center items-center space-y-12 p-12">
         <h1 class="text-4xl text-white uppercase font-bold">Portal</h1>
         

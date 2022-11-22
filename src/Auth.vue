@@ -5,7 +5,7 @@
   
   import MenuItem from './components/nav/Item.vue';
   
-  const user = JSON.parse(Cookies.get('auth_user', { domain: '.' + location.hostname }));
+  const user = JSON.parse(Cookies.get('auth_user', { domain: location.hostname }));
   const router = useRouter();
   const show_user_menu = ref(false);
 
@@ -14,8 +14,16 @@
   const toggleUserMenu = () => show_user_menu.value = !show_user_menu.value;
   
   const logout = () => {
-    Cookies.remove('auth_token', { domain: '.' + location.hostname });
+    Cookies.remove('auth_token', { domain: location.hostname });
     router.push('/login');
+  };
+
+  const auth_permissions = JSON.parse(Cookies.get('auth_permissions') ?? '[]');
+
+  const hasPermission = name => {
+    const permission = auth_permissions.find(x => x.n === name);
+
+    return Boolean(permission);
   };
 </script>
 
@@ -30,9 +38,9 @@
       
       <div class="flex items-center space-x-8">
         <menu-item :to="'/'" :icon="'fas fa-home'" :label="'Home'" />
-        <menu-item :to="'/users'" :icon="'fas fa-users'" :label="'Users'" />
-        <menu-item :to="'/permissions'" :icon="'fas fa-shield-halved'" :label="'Permissions'" />
-        <menu-item :to="'/offices'" :icon="'fas fa-building'" :label="'Offices'" />
+        <menu-item v-if="hasPermission('users:manage')" :to="'/users'" :icon="'fas fa-users'" :label="'Users'" />
+        <menu-item v-if="hasPermission('permissions:manage')" :to="'/permissions'" :icon="'fas fa-shield-halved'" :label="'Permissions'" />
+        <menu-item v-if="hasPermission('offices:manage')" :to="'/offices'" :icon="'fas fa-building'" :label="'Offices'" />
       </div>
       
       <div class="flex items-center space-x-2 relative">

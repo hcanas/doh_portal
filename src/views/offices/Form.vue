@@ -16,11 +16,17 @@
     id: null,
     name: '',
     short_name: '',
+    unit: 'cluster',
     parent_id: null,
   });
   
   const form_options = ref({
     offices: [],
+    units: [
+      { value: 'cluster', label: 'Cluster' },
+      { value: 'section', label: 'Section' },
+      { value: 'division', label: 'Division' },
+    ],
   });
   
   const form_errors = ref({});
@@ -93,6 +99,11 @@
             <form-label :text="'Short Name'" />
             <form-input-text v-model:value="form_data.short_name" />
             <form-field-error v-if="form_errors.short_name" :text="form_errors.short_name[0]" />
+          </div>
+          <div class="flex flex-col space-y-1">
+            <form-label :text="'Unit'" />
+            <form-select v-model:value="form_data.unit" :options="form_options.units" />
+            <form-field-error v-if="form_errors.unit" :text="form_errors.unit[0]" />
           </div>
           <div class="flex flex-col space-y-1">
             <form-label :text="'Parent Office'" />

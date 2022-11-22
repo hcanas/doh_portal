@@ -16,6 +16,7 @@ const routes = [
       {
         path: '/settings',
         name: 'settings',
+        component: () => import('../views/settings/Base.vue'),
       },
       {
         path: '/home',
@@ -31,11 +32,17 @@ const routes = [
             path: '',
             name: 'user list',
             component: () => import('../views/users/List.vue'),
+            meta: {
+              requiredPermissions: ['users:manage'],
+            },
           },
           {
             path: ':id(\\d+)',
             name: 'profile',
             component: () => import('../views/users/Profile.vue'),
+            meta: {
+              requiredPermissions: ['users:manage', 'user_permissions:manage'],
+            },
           },
         ],
       },
@@ -47,6 +54,9 @@ const routes = [
             path: '',
             name: 'permission list',
             component: () => import('../views/permissions/List.vue'),
+            meta: {
+              requiredPermissions: ['permissions:manage'],
+            },
           },
         ],
       },
@@ -58,6 +68,9 @@ const routes = [
             path: '',
             name: 'office list',
             component: () => import('../views/offices/List.vue'),
+            meta: {
+              requiredPermissions: ['offices:manage'],
+            },
           },
         ],
       },
@@ -76,23 +89,36 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from) => {
-  const token = Cookies.get('auth_token', { domain: '.' + location.hostname });
+  const token = Cookies.get('auth_token', { domain: location.hostname });
   
   if (to.meta.requiresAuth && token === undefined) {
     return '/login';
   } else if (to.meta.requiresAuth && token !== undefined) {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${Cookies.get('auth_token', { domain: '.' + location.hostname })}`;
-    const permissions = ['users', 'permissions'];
+    axios.defaults.headers.common['Authorization'] = `Bearer ${Cookies.get('auth_token', { domain: location.hostname })}`;
+    const permissions = ['announcements', 'users', 'permissions', 'offices', 'user_permissions'];
     
     return await axios.post(`${import.meta.env.VITE_API_URL}/auth?permissions=${permissions.join()}`)
     .then(response => {
       Cookies.set('auth_user', JSON.stringify({
         avatar: response.data.avatar,
         name: response.data.name,
-      }), { domain: '.' + location.hostname });
+      }), { domain: location.hostname });
+
+      const permissions = response.data.permissions.map(permission => {
+        return {
+          n: permission.name,
+          o: to.meta.requiredPermissions?.includes(permission.name) && permission.offices?.length > 0
+            ? permission.offices.map(office => office.id)
+            : [],
+        }
+      });
+
+      if (to.meta.requiredPermissions && permissions.find(x => to.meta.requiredPermissions.includes(x.n)) === undefined) return '/';
+
+      Cookies.set('auth_permissions', JSON.stringify(permissions));
     })
     .catch(() => {
-      Cookies.remove('auth_token', { domain: '.' + location.hostname });
+      Cookies.remove('auth_token', { domain: location.hostname });
       return '/login';
     });
   } else if (token !== undefined) {
