@@ -1,0 +1,12 @@
+version: '3.4'
+services:
+  portal.ui:
+    container_name: portal.ui
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    command: ["npm", "run", "dev"]
+    ports:
+      - 3000:3000
+    volumes:
+      - ./:/var/www/app
