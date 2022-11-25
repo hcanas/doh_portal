@@ -24,6 +24,7 @@
     name: '',
     nickname: '',
     address: '',
+    contact_number: '',
     email: '',
     position: '',
     birthdate: '',
